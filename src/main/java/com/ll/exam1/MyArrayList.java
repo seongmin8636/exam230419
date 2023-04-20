@@ -1,8 +1,8 @@
 package com.ll.exam1;
 
-public class MyArrayList<T> {
+public class  .MyArrayList<T> {
     public boolean debug = false;
-    private String[] data;
+    private Object[] data;
 
     private int size = 0;
 
@@ -11,14 +11,14 @@ public class MyArrayList<T> {
     }
 
     public MyArrayList(int dataLength) {
-        data = new String[dataLength];
+        data = new Object[dataLength];
     }
 
     public int size() {
         return size;
     }
 
-    public boolean add(String element) {
+    public boolean add(T element) {
         // 만약에 공간이 부족하면 새 data 객체를 만든다.
         makeNewDataIfNotEnough();
         data[size] = element;
@@ -37,14 +37,14 @@ public class MyArrayList<T> {
 
     private void makeNewData() {
         // 새 배열을 만든다.(새 업체를 만든다.)
-        String[] newData = new String[data.length * 2];
+        Object[] newData = new Object[data.length * 2];
 
         // 기존 창고에 있던 물품들을 전부 새 창고로 옮긴다.
         for (int i = 0; i < data.length; i++) {
             newData[i] = data[i];
         }
 
-        if ( debug ) {
+        if (debug) {
             System.out.printf("배열크기 증가 : %d => %d\n", data.length, newData.length);
         }
 
@@ -57,7 +57,22 @@ public class MyArrayList<T> {
         return size >= data.length;
     }
 
-    public String get(int index) {
-        return data[index];
+    public T get(int index) {
+        return (T) data[index];
+    }
+
+    public int indexOf(T element) {
+        for (int i = 0; i < data.length; i++) {
+            if (element.equals(data[i])) return i;
+        }
+
+        return -1;
+
+//        return IntStream.range(0, size)
+//                .mapToObj(index -> new Object[]{index, data[index]})
+//                .filter(arr -> element.equals(arr[1]))
+//                .mapToInt(arr -> (int)arr[0])
+//                .findFirst()
+//                .orElse(-1);
     }
 }

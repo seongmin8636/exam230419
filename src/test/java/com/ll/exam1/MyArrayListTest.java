@@ -4,6 +4,8 @@ import com.ll.TestUt;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MyArrayListTest {
@@ -42,20 +44,51 @@ public class MyArrayListTest {
     void t4() {
         MyArrayList<String> list = new MyArrayList<>();
 
-        String[] data = TestUt.getFieldValue(list, "data", null);
-        assertThat(data.length).isEqualTo(2);
+        // 초창기 배열의 길이
+        int dataLength1 = ((String[]) TestUt.getFieldValue(list, "data", null)).length;
 
-        list.add("사과");
-        list.add("포도");
+        // IntStream.range(0, 10); = [0, ... 9] 까지의 int 스트림 발생
+        // 딱 1번 넘칠만큼의 데이터를 넣는다.
+        IntStream.range(0, dataLength1 + 1)
+                .forEach(index -> list.add("사과 %d".formatted(index)));
 
-        data = TestUt.getFieldValue(list, "data", null);
-        assertThat(data.length).isEqualTo(2);
+        // 현재 배열의 길이
+        int dataLength2 = ((String[]) TestUt.getFieldValue(list, "data", null)).length;
+        assertThat(dataLength2).isGreaterThan(dataLength1);
+    }
 
-        list.add("당근");
+    @Test
+    @DisplayName("MyArrayList 초기화(new) 시 생성자 인자로 data 배열의 사이즈 지정")
+    void t5() {
+        MyArrayList<String> list = new MyArrayList<>(200);
 
-        data = TestUt.getFieldValue(list, "data", null);
-        assertThat(data.length).isEqualTo(4);
+        // 초창기 배열의 길이
+        int dataLength = ((String[]) TestUt.getFieldValue(list, "data", null)).length;
 
-        assertThat(list.size()).isEqualTo(3);
+        assertThat(dataLength).isEqualTo(200);
+    }
+
+    @Test
+    @DisplayName("디버그 : 데이터를 많이 넣으면 배열증가가 많이 발생함")
+    void t6() {
+        MyArrayList<String> list = new MyArrayList<>();
+        list.debug = true;
+
+        // IntStream.range(0, 10); = [0, ... 9] 까지의 int 스트림 발생
+        // 딱 1번 넘칠만큼의 데이터를 넣는다.
+        IntStream.range(0, 100)
+                .forEach(index -> list.add("사과 %d".formatted(index)));
+    }
+
+    @Test
+    @DisplayName("디버그 : 애초에 큰 배열로 만들면 데이터를 많이 넣어도 배열증가가 빈번하지 않음")
+    void t7() {
+        MyArrayList<String> list = new MyArrayList<>(25);
+        list.debug = true;
+
+        // IntStream.range(0, 10); = [0, ... 9] 까지의 int 스트림 발생
+        // 딱 1번 넘칠만큼의 데이터를 넣는다.
+        IntStream.range(0, 100)
+                .forEach(index -> list.add("사과 %d".formatted(index)));
     }
 }

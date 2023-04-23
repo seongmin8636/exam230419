@@ -1,6 +1,8 @@
 package com.ll.exam1;
 
-public class  .MyArrayList<T> {
+import java.util.stream.IntStream;
+
+public class MyArrayList<T> {
     public boolean debug = false;
     private Object[] data;
 
@@ -28,9 +30,54 @@ public class  .MyArrayList<T> {
         return true;
     }
 
+    public boolean add(int index, T element) {
+        // 만약에 공간이 부족하면 새 data 객체를 만든다.
+        makeNewDataIfNotEnough();
+
+        // 해당 공간을 빈공간으로 만든다.
+        makeEmptyIndex(index);
+
+        data[index] = element;
+
+        size++;
+
+        return true;
+    }
+
+    public T set(int index, T element) {
+        T old = (T) data[index];
+
+        data[index] = element;
+
+        return old;
+    }
+
+    public T remove(int index) {
+        T old = (T) data[index];
+
+        // 앞에서 부터 자리 이동
+        for (int i = index + 1; i < size; i++) {
+            data[i - 1] = data[i];
+        }
+
+        data[size - 1] = null;
+
+        size--;
+
+        return old;
+    }
+
+    private void makeEmptyIndex(int index) {
+        // 맨뒤 승객부터 뒤로 1칸씩 이동
+
+        for (int i = size - 1; i >= index; i--) {
+            data[i + 1] = data[i];
+        }
+    }
+
     private void makeNewDataIfNotEnough() {
         // 먼저 공간이 부족한지 확인
-        if (ifNotEnough()) {
+        if (isNotEnough()) {
             makeNewData();
         }
     }
@@ -53,7 +100,7 @@ public class  .MyArrayList<T> {
         data = newData;
     }
 
-    private boolean ifNotEnough() {
+    private boolean isNotEnough() {
         return size >= data.length;
     }
 
@@ -62,17 +109,29 @@ public class  .MyArrayList<T> {
     }
 
     public int indexOf(T element) {
-        for (int i = 0; i < data.length; i++) {
-            if (element.equals(data[i])) return i;
-        }
+//        for (int i = 0; i < data.length; i++) {
+//            if (element.equals(data[i])) return i;
+//        }
+//
+//        return -1;
 
-        return -1;
+        // 더 깔끔한 버전
+        return IntStream.range(0, size)
+                .filter(index -> element.equals(data[index]))
+                .findFirst()
+                .orElse(-1);
 
+        // 복잡한 연산까지 할 수 있는 버전
+        // 예를들어서 index와 element 에 대한 복합조건을 filter에 사용가능
 //        return IntStream.range(0, size)
 //                .mapToObj(index -> new Object[]{index, data[index]})
 //                .filter(arr -> element.equals(arr[1]))
 //                .mapToInt(arr -> (int)arr[0])
 //                .findFirst()
 //                .orElse(-1);
+    }
+
+    public boolean contains(T element) {
+        return indexOf(element) != -1;
     }
 }
